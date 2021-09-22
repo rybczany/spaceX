@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get all upcoming launches</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        body{
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+        }
+        .container{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        table{
+            border-collapse: collapse;
+            max-width: 800px;
+        }
+        th{
+            border-bottom: 1px solid #000;
+        }
+        th, td{
+            border-right: 1px solid #000;
+            padding: 5px 10px;
+            width: 25%;
+        }
+        td:last-child,
+        th:last-child{
+            border-right: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Get all upcoming launches</h1>
+        <table id="launches"></table>
+    </div>
+    <script>
+        const apiUrl = "https://api.spacexdata.com/v4/launches/upcoming";
+        async function getapi(url) {
+            const response = await fetch(url);
+            let data = await response.json();
+            show(data);
+        }
+        getapi(apiUrl);
+
+        function show(data) {
+            let sortedData = data.sort((a, b) => a.date_utc.localeCompare(b.date_utc))
+            let tab =
+            `<tr>
+                <th>Numer lotu</th>
+                <th>Nazwa misji</th>
+                <th>Data</th>
+                <th>Opis misji</th>
+            </tr>`;
+
+            for (let flight of sortedData) {
+                tab += `<tr> 
+                    <td>${flight.flight_number} </td>
+                    <td>${flight.name}</td>
+                    <td>${flight.date_utc}</td> 
+                    <td>${flight.details ? flight.details : "brak opisu"}</td>          
+                </tr>`;
+            }
+            document.getElementById("launches").innerHTML = tab;
+        }
+    </script>
+</body>
+
+</html>
